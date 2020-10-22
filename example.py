@@ -1,44 +1,45 @@
 import pymysql as ps
 
 
-# name db = yeast-transcriptomes
+# name db = database-2
 # user_name = admin
-# password: qJ6D2qwzjhbdwic
+# password: admin123
 # make the connection to the db
 def make_connection():
-    return ps.connect(host='yeast-transcriptomes.czfisxdhgfsf.us-east-1.rds.amazonaws.com', user='admin',
-                      passwd='qJ6D2qwzjhbdwic',
+    return ps.connect(host='database-2.cykngyhgdi6y.us-east-1.rds.amazonaws.com', user='admin',
+                      passwd='admin123',
                       port=3306, autocommit=True)
+
 def setup_dp(cur):
     
     # Set up db
-    cur.execute('DROP DATABASE IF EXISTS yeast_transcriptomesDB');
-    cur.execute('CREATE DATABASE yeast_transcriptomesDB');
-    cur.execute('USE yeast_transcriptomesDB');
+    cur.execute('DROP DATABASE IF EXISTS SuperbowlDB');
+    cur.execute('CREATE DATABASE SuperbowlDB');
+    cur.execute('USE SuperbowlDB');
 
     # Drop Existing Tables
-    cur.execute('DROP TABLE IF EXISTS Conditions_Annotations');
-    cur.execute('DROP TABLE IF EXISTS Yeast_Gene');
-    cur.execute('DROP TABLE IF EXISTS Localization');
-    cur.execute('DROP TABLE IF EXISTS SC_Expression');
-    cur.execute('DROP TABLE IF EXISTS YeastGene_Localization');
+    cur.execute('DROP TABLE IF EXISTS Team');
+    cur.execute('DROP TABLE IF EXISTS Player');
+    cur.execute('DROP TABLE IF EXISTS Stadium');
+    cur.execute('DROP TABLE IF EXISTS Player_Team');
+    cur.execute('DROP TABLE IF EXISTS Superbowl');
     # Create Tables
     cur.execute(
-        '''CREATE TABLE Conditions_Annotations (Condit_ID VARCHAR(30) NOT NULL PRIMARY KEY,PrimaryComponent VARCHAR(30),SecondaryComponent VARCHAR(30),Additional_Information VARCHAR(30));''')
+        '''CREATE TABLE Team(Name VARCHAR(500), PRIMARY KEY (Name));''')
     cur.execute(
-        '''CREATE TABLE Yeast_Gene (Gene_ID VARCHAR(30) NOT NULL PRIMARY KEY,Validation VARCHAR(30),Biological_Process VARCHAR(30),Cellular_Component VARCHAR(30),Molecular_Function VARCHAR(30));''')
+        '''CREATE TABLE Player(Name VARCHAR(50), PRIMARY KEY (Name));''')
     cur.execute(
-        '''CREATE TABLE Localization (Localization_ID INT NOT NULL PRIMARY KEY,Biological_Process_Loc VARCHAR(30),Cellular_Component_Loc VARCHAR(30),Molecular_Function VARCHAR(30));''')
+        '''CREATE TABLE Stadium(Name VARCHAR(500), City VARCHAR(50), State VARCHAR(50), PRIMARY KEY (Name));''')
     # Create Join Tables
     cur.execute(
-        '''CREATE TABLE SC_Expression (SC_ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,Gene_ID VARCHAR(30) NOT NULL ,Condit_ID VARCHAR(30) NOT NULL, FOREIGN KEY(Gene_ID) REFERENCES Yeast_Gene(Gene_ID),FOREIGN KEY(Condit_ID) REFERENCES Conditions_Annotations(Condit_ID),SC_Expression FLOAT);''')
+        '''CREATE TABLE Player_Team(Player_Name VARCHAR(50), Team_Name VARCHAR(500), PRIMARY KEY (Player_Name, Team_Name), FOREIGN KEY (Player_Name) REFERENCES Player(Name), FOREIGN KEY (Team_Name) REFERENCES Team(Name));''')
     cur.execute(
-        '''CREATE TABLE YeastGene_Localization (Gene_local_ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, Gene_ID VARCHAR(30) NOT NULL, Localization_ID INT NOT NULL , FOREIGN KEY(Gene_ID) REFERENCES Yeast_Gene(Gene_ID),FOREIGN KEY(Localization_ID) REFERENCES Localization(Localization_ID));''')
+        '''CREATE TABLE Superbowl(Date date, Title VARCHAR(50), Winner VARCHAR(500), Winner_Pts INT(2), Loser VARCHAR(500), Loser_Pts INT(2), MVP VARCHAR(50), Stadium VARCHAR(500), PRIMARY KEY (Title), FOREIGN KEY (Winner) REFERENCES Team(Name), FOREIGN KEY (Loser) REFERENCES Team(Name), FOREIGN KEY (MVP) REFERENCES Player(Name), FOREIGN KEY (Stadium) REFERENCES Stadium(Name));''')
 
 
 def insert_data(cur):
         # Insertions for conditions table
-    with open("data/rf_conditions_annotations.csv", 'r') as r1:
+    with open("superbowlPLUS.csv", 'r') as r1:
         # skips first line the headers
         next(r1)
         for line in r1:
