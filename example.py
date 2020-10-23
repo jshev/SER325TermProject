@@ -1,3 +1,6 @@
+#import pymysql as ps
+import sys
+sys.path.insert(0,"/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages")
 import pymysql as ps
 
 
@@ -65,13 +68,13 @@ def insert_data(cur):
                 'INSERT IGNORE INTO Player(Name) VALUES (%s)',
                 (MVP))
             cur.execute(
-                'INSERT IGNORE INTO Stadium(Name,City,Sates) VALUES (%s,%s,%s)',
+                'INSERT IGNORE INTO Stadium(Name, City, State) VALUES (%s,%s,%s)',
                 (stadium, city, state))
             cur.execute(
                 'INSERT IGNORE INTO Player_Team(Player_Name, Team_Name) VALUES (%s,%s)',
                 (MVP, winner))
             cur.execute(
-                'INSERT IGNORE INTO Superbowl(date,sbTitle,winner,winnerPts,loser,loserPts,MVP,stadium) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)',
+                'INSERT IGNORE INTO Superbowl(date, sbTitle, winner, winnerPts, loser, loserPts, MVP, stadium) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)',
                 (date, sbTitle, winner, winnerPts, loser, loserPts, MVP, stadium))
 cnx = make_connection()
 cur = cnx.cursor()
