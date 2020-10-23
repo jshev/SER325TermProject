@@ -44,47 +44,35 @@ def insert_data(cur):
         next(r1)
         for line in r1:
             line = line.split(',')
-            ID_num = line.__getitem__(0)
-            sample_ID = line.__getitem__(1)
-            primary = line.__getitem__(2)
-            secondary = line.__getitem__(3)
-            additional_info = line.__getitem__(4)
-            # print(ID_num,sample_ID,primary,secondary,additional_info)
+            date = line.__getitem__(0)
+            sbTitle = line.__getitem__(1)
+            winner = line.__getitem__(2)
+            winnerPts = line.__getitem__(3)
+            loser = line.__getitem__(4)
+            loserPts = line.__getitem__(5)
+            MVP = line.__getitem__(6)
+            stadium = line.__getitem__(7)
+            city = line.__getitem__(8)
+            state = line.__getitem__(9)
+            # print(date,sbTitle,winner,winnerPts,loser,loserPts,MVP,stadium,city,state)
             cur.execute(
-                'INSERT IGNORE INTO Conditions_Annotations(Condit_ID,PrimaryComponent,SecondaryComponent,Additional_Information) VALUES (%s,%s,%s,%s)',
-                (sample_ID, primary, secondary, additional_info))
-    # insertions for Yeast-gene and Localization table and Yeast-gene&localization join table
-    with open("data/combined_BP_CC_MF.csv", 'r') as r1:
-        # skips first line the headers
-        next(r1)
-        for line in r1:
-            line = line.split(',')
-            ID_num = int(line.__getitem__(0)) + 1
-            ID_num = str(ID_num)
-            gene = line.__getitem__(1)
-            valid = line.__getitem__(2)
-            bp = line.__getitem__(3)
-            cc = line.__getitem__(4)
-            mf = line.__getitem__(5)
+                'INSERT IGNORE INTO Team(Name) VALUES (%s)',
+                (winner))
             cur.execute(
-                'INSERT IGNORE INTO Yeast_Gene(Gene_ID,Validation, Biological_Process,Cellular_Component,Molecular_Function) VALUES (%s,%s,%s,%s,%s)',
-                (gene, valid, bp, cc, mf))
+                'INSERT IGNORE INTO Team(Name) VALUES (%s)',
+                (loser))
             cur.execute(
-                'INSERT IGNORE INTO Localization(Localization_ID,Biological_Process_Loc,Cellular_Component_Loc,Molecular_Function) VALUES (%s,%s,%s,%s)',
-                (ID_num, bp, cc, mf))
-            cur.execute('INSERT IGNORE INTO YeastGene_Localization(Gene_ID,Localization_ID) VALUES (%s,%s)', (gene, ID_num))
-    # insertion for SC expression table
-    with open("data/rf_SC_expressions.csv", 'r') as r1:
-        next(r1)
-        for line in r1:
-            line = line.split(',')
-            ID_num = int(line.__getitem__(0)) + 1
-            ID_num = str(ID_num)
-            gene = line.__getitem__(1)
-            condit = line.__getitem__(2)
-            sc = line.__getitem__(3)
-            cur.execute('INSERT IGNORE INTO SC_Expression(Gene_ID,Condit_ID,SC_Expression) VALUES (%s,%s,%s)',
-                        (gene, condit, sc))
+                'INSERT IGNORE INTO Player(Name) VALUES (%s)',
+                (MVP))
+            cur.execute(
+                'INSERT IGNORE INTO Stadium(Name,City,Sates) VALUES (%s,%s,%s)',
+                (stadium, city, state))
+            cur.execute(
+                'INSERT IGNORE INTO Player_Team(Player_Name, Team_Name) VALUES (%s,%s)',
+                (MVP, winner))
+            cur.execute(
+                'INSERT IGNORE INTO Superbowl(date,sbTitle,winner,winnerPts,loser,loserPts,MVP,stadium) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)',
+                (date, sbTitle, winner, winnerPts, loser, loserPts, MVP, stadium))
 cnx = make_connection()
 cur = cnx.cursor()
 setup_dp(cur)
