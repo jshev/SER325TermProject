@@ -1,3 +1,5 @@
+# code by Julianna Shevchenko & Adam Curley
+
 #import pymysql as ps
 import sys
 sys.path.insert(0,"/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages")
@@ -7,7 +9,7 @@ import pymysql as ps
 # name db = database-2
 # user_name = admin
 # password: admin123
-# make the connection to the db
+# Make the connection to the db
 def make_connection():
     return ps.connect(host='database-2.cykngyhgdi6y.us-east-1.rds.amazonaws.com', user='admin',
                       passwd='admin123',
@@ -26,6 +28,7 @@ def setup_dp(cur):
     cur.execute('DROP TABLE IF EXISTS Stadium');
     cur.execute('DROP TABLE IF EXISTS Player_Team');
     cur.execute('DROP TABLE IF EXISTS Superbowl');
+    
     # Create Tables
     cur.execute(
         '''CREATE TABLE Team(Name VARCHAR(500), PRIMARY KEY (Name));''')
@@ -33,6 +36,7 @@ def setup_dp(cur):
         '''CREATE TABLE Player(Name VARCHAR(50), PRIMARY KEY (Name));''')
     cur.execute(
         '''CREATE TABLE Stadium(Name VARCHAR(500), City VARCHAR(50), State VARCHAR(50), PRIMARY KEY (Name));''')
+    
     # Create Join Tables
     cur.execute(
         '''CREATE TABLE Player_Team(Player_Name VARCHAR(50), Team_Name VARCHAR(500), PRIMARY KEY (Player_Name, Team_Name), FOREIGN KEY (Player_Name) REFERENCES Player(Name), FOREIGN KEY (Team_Name) REFERENCES Team(Name));''')
@@ -57,7 +61,9 @@ def insert_data(cur):
             stadium = line.__getitem__(7)
             city = line.__getitem__(8)
             state = line.__getitem__(9)
-            # print(date,sbTitle,winner,winnerPts,loser,loserPts,MVP,stadium,city,state)
+            
+            print(date,sbTitle,winner,winnerPts,loser,loserPts,MVP,stadium,city,state)
+            
             cur.execute(
                 'INSERT IGNORE INTO Team(Name) VALUES (%s)',
                 (winner))
@@ -74,8 +80,9 @@ def insert_data(cur):
                 'INSERT IGNORE INTO Player_Team(Player_Name, Team_Name) VALUES (%s,%s)',
                 (MVP, winner))
             cur.execute(
-                'INSERT IGNORE INTO Superbowl(date, sbTitle, winner, winnerPts, loser, loserPts, MVP, stadium) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)',
+                'INSERT IGNORE INTO Superbowl(Date, Title, Winner, Winner_Pts, Loser, Loser_Pts, MVP, Stadium) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)',
                 (date, sbTitle, winner, winnerPts, loser, loserPts, MVP, stadium))
+
 cnx = make_connection()
 cur = cnx.cursor()
 setup_dp(cur)
