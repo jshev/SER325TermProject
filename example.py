@@ -4,6 +4,7 @@
 import sys
 sys.path.insert(0,"/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages")
 import pymysql as ps
+import matplotlib.pyplot as plt
 
 
 # name db = database-2
@@ -11,8 +12,8 @@ import pymysql as ps
 # password: admin123
 # Make the connection to the db
 def make_connection():
-    return ps.connect(host='database-2.cykngyhgdi6y.us-east-1.rds.amazonaws.com', user='admin',
-                      passwd='admin123',
+    return ps.connect(host='database-1.ct1ynq623sbm.us-east-1.rds.amazonaws.com', user='admin',
+                      passwd='Haze123',
                       port=3306, autocommit=True)
 
 def setup_dp(cur):
@@ -62,7 +63,7 @@ def insert_data(cur):
             city = line.__getitem__(8)
             state = line.__getitem__(9)
             
-            print(date,sbTitle,winner,winnerPts,loser,loserPts,MVP,stadium,city,state)
+            # print(date,sbTitle,winner,winnerPts,loser,loserPts,MVP,stadium,city,state)
             
             cur.execute(
                 'INSERT IGNORE INTO Team(Name) VALUES (%s)',
@@ -83,10 +84,33 @@ def insert_data(cur):
                 'INSERT IGNORE INTO Superbowl(Date, Title, Winner, Winner_Pts, Loser, Loser_Pts, MVP, Stadium) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)',
                 (date, sbTitle, winner, winnerPts, loser, loserPts, MVP, stadium))
 
+def query_db(cur):
+    #Query db
+    cur.execute('SELECT * FROM Superbowl');
+
+    #Print result in terminal
+    myresult = curr.fetchall();
+    for x in myresult:
+        print(x);
+
+#Example Graphs
+names = ['group_a', 'group_b', 'group_c']
+values = [1, 10, 100]
+plt.figure(figsize=(9, 3)) #create a figure and set up the width and height in inches
+plt.subplot(131) #a three digit integer describing the position of the subplot :nrows, ncols
+ # and index for example 131 = 1 row, 3 columns, 1 first plot
+plt.bar(names, values)
+plt.subplot(132)
+plt.scatter(names, values)
+plt.subplot(133)
+plt.plot(names, values)
+plt.suptitle('Categorical Plotting')
+
 cnx = make_connection()
 cur = cnx.cursor()
 setup_dp(cur)
 insert_data(cur)
+query_db(cur)
 cur.close()
 cnx.commit()
 cnx.close()
