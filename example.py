@@ -4,16 +4,15 @@
 import sys
 sys.path.insert(0,"/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages")
 import pymysql as ps
-import matplotlib.pyplot as plt
 
 
-# name db = database-2
+# name db = database-3
 # user_name = admin
 # password: admin123
 # Make the connection to the db
 def make_connection():
-    return ps.connect(host='database-1.ct1ynq623sbm.us-east-1.rds.amazonaws.com', user='admin',
-                      passwd='Haze123',
+    return ps.connect(host='database-3.cykngyhgdi6y.us-east-1.rds.amazonaws.com', user='admin',
+                      passwd='admin123',
                       port=3306, autocommit=True)
 
 def setup_dp(cur):
@@ -93,24 +92,11 @@ def query_db(cur):
     for x in myresult:
         print(x);
 
-#Example Graphs
-names = ['group_a', 'group_b', 'group_c']
-values = [1, 10, 100]
-plt.figure(figsize=(9, 3)) #create a figure and set up the width and height in inches
-plt.subplot(131) #a three digit integer describing the position of the subplot :nrows, ncols
- # and index for example 131 = 1 row, 3 columns, 1 first plot
-plt.bar(names, values)
-plt.subplot(132)
-plt.scatter(names, values)
-plt.subplot(133)
-plt.plot(names, values)
-plt.suptitle('Categorical Plotting')
-
 cnx = make_connection()
 cur = cnx.cursor()
 setup_dp(cur)
 insert_data(cur)
-query_db(cur)
+#query_db(cur)
 cur.close()
 cnx.commit()
 cnx.close()
