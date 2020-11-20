@@ -4,6 +4,8 @@
 import sys
 sys.path.insert(0,"/Library/Frameworks/Python.framework/Versions/3.9/lib/python3.9/site-packages")
 import pymysql as ps
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 # name db = database-3
@@ -35,19 +37,19 @@ print("Query #1")
 cur.execute('SELECT Winner, COUNT(*) FROM Superbowl GROUP BY Winner ORDER BY COUNT(*) DESC');
 myresult = cur.fetchall();
 for x in myresult:
-  print(x);
+    print(x);
     
 print("Query #2")
 cur.execute('SELECT S.State, Count(*) FROM Superbowl SB, Stadium S WHERE SB.Stadium = S.Name GROUP BY S.State ORDER BY COUNT(*) DESC;');
 myresult = cur.fetchall();
 for x in myresult:
-  print(x);
+    print(x);
 
 print("Query #3")
 cur.execute('SELECT MVP, COUNT(*) FROM Superbowl GROUP BY MVP HAVING COUNT(*) > 1 ORDER BY COUNT(*) DESC;');
 myresult = cur.fetchall();
 for x in myresult:
-  print(x);
+    print(x);
 
 print("Query #4")
 cur.execute('SELECT Date, Winner_Pts, Loser_Pts FROM Superbowl ORDER BY Date DESC;');
@@ -59,7 +61,12 @@ print("Query #5")
 cur.execute('SELECT Month(Date), COUNT(*) FROM Superbowl GROUP BY Month(Date) ORDER BY Month(Date);');
 myresult = cur.fetchall();
 for x in myresult:
-  print(x);
+    print(x);
+
+x = np.arange(0, 4 * np.pi, 0.1)
+y = np.sin(x)
+plt.plot(x, y)
+plt.show()
 
 cur.close()
 cnx.commit()
