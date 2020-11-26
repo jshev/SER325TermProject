@@ -25,11 +25,21 @@ df3=pd.read_sql('SELECT MVP, COUNT(*) FROM Superbowl GROUP BY MVP HAVING COUNT(*
 fig4=px.pie(values=df3['COUNT(*)'],names=df3['MVP'],title='Multiple Time MVPs');
 #fig4.show();
 
+df4=pd.read_sql('SELECT S.State, Count(*) FROM Superbowl SB, Stadium S WHERE SB.Stadium = S.Name GROUP BY S.State ORDER BY COUNT(*) DESC',conn);
+fig5=px.bar(x=df4['State'],y=df4['Count(*)'],title='Superbowls Hosted by States',labels={"x": "States","y": "No of Superbowls Hosted"});
+#fig5.show();
+
+df5=pd.read_sql('SELECT Month(Date), COUNT(*) FROM Superbowl GROUP BY Month(Date) ORDER BY Month(Date)',conn);
+fig6=px.bar(x=df5['Month(Date)'],y=df5['COUNT(*)'],title='Month of Superbowl',labels={"x": "Numeric Months","y": "No of Superbowls"});
+#fig6.show();
+
 with open('p_graph.html', 'a') as f:
+    f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig1.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig6.to_html(full_html=False, include_plotlyjs='cdn'))
 
 conn.close();
 
